@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'edu.pucmm.isc'
+version '1.0-SNAPSHOT'
+
+mainClassName = 'edu.pucmm.isc.Server'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'io.javalin:javalin:3.9.0'
+    compile 'org.slf4j:slf4j-simple:1.7.30'
+    compile "org.freemarker:freemarker:2.3.30"
+    compile 'com.h2database:h2:1.4.200'
+}

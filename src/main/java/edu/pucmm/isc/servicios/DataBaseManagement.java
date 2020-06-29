@@ -34,7 +34,7 @@ public class DataBaseManagement {
     // Creacion de tablas iniciales
     public static void crearTablas() throws  SQLException{
         String producto = "CREATE TABLE IF NOT EXISTS PRODUCTO (ID INT IDENTITY PRIMARY KEY NOT NULL, " +
-                "NOMBRE VARCHAR(100) NOT NULL, PRECIO DECIMAL NOT NULL, CANTIDAD INT);";
+                "NOMBRE VARCHAR(100) NOT NULL, PRECIO DECIMAL NOT NULL);";
         String ventaProducto = "CREATE TABLE IF NOT EXISTS VENTAPRODUCTO (ID INT IDENTITY PRIMARY KEY NOT NULL, " +
                 "FECHACOMPRA DATE NOT NULL, NOMBRECLIENTE VARCHAR(100) NOT NULL);";
         String cantidadVtaProd = "CREATE TABLE IF NOT EXISTS CANTVENTAPROD (VENTA INT NOT NULL, " +

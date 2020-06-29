@@ -12,6 +12,10 @@
                         <input type="text" class="form-control" id="usuario" name="usuario" required>
                         <label for="password">Password:</label>
                         <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="text-center mt-4">
+                            <input type="checkbox" class="form-check-input" id="recordarme" name="recordarme" value="yes">
+                            <label class="form-check-label" for="recordarme">Recordarme</label>
+                        </div>
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Iniciar Sesion</button>

@@ -6,6 +6,7 @@ import edu.pucmm.isc.servicios.StoreServices;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinFreemarker;
+import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,12 +32,24 @@ public class UserController {
     public void aplicarRutas() {
         app.routes(() -> {
 
-            // Verificar si el carrito existe en la sesion antes de cargar
+            // Verificar si el carrito existe en la sesion y si la cookie recordarme existe antes de cargar
             before(ctx -> {
                 CarroCompra carrito = ctx.sessionAttribute("carrito");
                 if(carrito == null) {
                     List<Producto> productosIniciales = new ArrayList<Producto>();
                     ctx.sessionAttribute("carrito", new CarroCompra(1, productosIniciales));
+                }
+                // Verificamos si existe el cookie de recordarme y si existe loggeamos automaticamente al usuario al que le pertenece
+                if(ctx.cookie("recordarme") != null){
+                    for(Usuario tmp : tienda.getListaUsuarios()) {
+                        String key = "@cm1ptgrone" + tmp.getUsuario();
+                        StrongPasswordEncryptor pwEncryptor = new StrongPasswordEncryptor();
+                        String encryptedPassword = pwEncryptor.encryptPassword(key);
+                        if(pwEncryptor.checkPassword(encryptedPassword, ctx.cookie("recordarme"))){
+                            tienda.loginUsuario(tmp.getUsuario(), tmp.getPassword());
+                            ctx.sessionAttribute("usuario", tmp);
+                        }
+                    }
                 }
             });
 
@@ -59,7 +72,14 @@ public class UserController {
                 post("/usuarios/login/", ctx -> {
                     String usr = ctx.formParam("usuario");
                     String passw = ctx.formParam("password");
+                    String check = ctx.formParam("recordarme");
                     Usuario tmp = tienda.loginUsuario(usr, passw);
+                    if(check.equals("yes")){
+                        String key = "@cm1ptgrone" + tmp.getUsuario();
+                        StrongPasswordEncryptor pwEncryptor = new StrongPasswordEncryptor();
+                        String encryptedPassword = pwEncryptor.encryptPassword(key);
+                        ctx.cookie("recordarme", encryptedPassword, 604800);
+                    }
                     ctx.sessionAttribute("usuario", tmp);
                     ctx.redirect("/");
                 });
@@ -69,6 +89,7 @@ public class UserController {
                 get("/usuarios/logout/", ctx -> {
                     tienda.logoutUsuario();
                     ctx.req.getSession().invalidate();
+                    ctx.removeCookie("recordarme");
                     ctx.redirect("/api/usuarios/login/");
                 });
             });

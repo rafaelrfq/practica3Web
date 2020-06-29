@@ -276,6 +276,33 @@ public class StoreServices {
         return usuario;
     }
 
+    public List<Usuario> getListaUsuarios() {
+        List<Usuario> listaUsuarios = new ArrayList<Usuario>();
+        Connection con = null;
+        try {
+            String query = "SELECT * FROM USUARIO;";
+            con = ConexionDB.getInstance().getConn();
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Usuario usuario = new Usuario();
+                usuario.setUsuario(rs.getString("USUARIO"));
+                usuario.setNombre(rs.getString("NOMBRE"));
+                usuario.setPassword(rs.getString("PASSWORD"));
+                listaUsuarios.add(usuario);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally{
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return listaUsuarios;
+    }
+
     public Usuario loginUsuario(String usuario, String passw){
         Usuario tmp = getUsuarioPorNombreUsuario(usuario);
         if(tmp == null) {
